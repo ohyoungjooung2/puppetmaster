@@ -45,6 +45,7 @@ class rails4::ruby_compile {
         user => $rails_user,
         group => $rails_group,
         command => "$config_dir/configure --prefix=$ruby_each_home && make && make install",
+        unless => "ls $ruby_path",
         require => Exec["wget_ruby_source_$ruby_version"],
         timeout => 0,
   
