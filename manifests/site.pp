@@ -1,3 +1,4 @@
+Exec { path => ['/bin','/usr/sbin','/usr/local/bin','/usr/local/sbin','/sbin','/usr/bin'], }
 node default {}
 node 'puppetclient1'{
      #rails4 account add
@@ -7,6 +8,7 @@ node 'puppetclient1'{
      #compile ruby $version
      include rails4::ruby_compile
      include mysql::server
+     include java::oracle_jdk7
 }
 
 node 'centos7-puppet-client'{

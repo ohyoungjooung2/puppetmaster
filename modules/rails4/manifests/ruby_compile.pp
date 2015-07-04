@@ -11,6 +11,8 @@ class rails4::ruby_compile {
      $ruby_dir="$rails_home/.rubies"
      $ruby_each_home="$ruby_dir/$ruby_version"
      $ruby_path="$ruby_each_home/bin"
+     $jdk_version="jdk1.7.0_79"
+     $java_path="$rails_home/.java_$jdk_version/bin"
 
      #$ruby_url="http://cache.ruby-lang.org/pub/ruby/2.0/ruby-2.0.0-p645.tar.gz"
      #$ruby_url="http://cache.ruby-lang.org/pub/ruby/2.1/ruby-2.1.5.tar.gz"

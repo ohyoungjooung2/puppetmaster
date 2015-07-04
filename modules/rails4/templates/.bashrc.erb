@@ -1,4 +1,5 @@
 <%# /etc/puppet/modules/rails4/templates/.bashrc.erb %>
 RUBY_PATH=<%= @ruby_path %>
-export PATH=$RUBY_PATH:$PATH
+JAVA_PATH=<%= @java_path %>
+export PATH=$RUBY_PATH:$JAVA_PATH:$PATH
 set -o vi
