@@ -1,0 +1,104 @@
+class myblog inherits myblog::config {
+     #Puppet deploying rails4.2.1 application 
+#     $user="$rails_user"
+#     $group="$rails_group"
+#     $rails_home="$rails_home"
+#     $blog_name="myblog"
+#     $blog_home="$rails_home/$blog_name"
+#     $blog_dir="$rails_home/$blog_name"
+#     $myblog_url= "https://github.com/ohyoungjooung2/myblog.git"
+#     $blog_config="$blog_dir/config"
+#     $unicorn="unicorn.rb"
+#     $unicorn_start_sh="unicorn_init.sh"
+
+     include myblog::required_pkg 
+
+     exec { "git_clone_myblog":
+            cwd => "$rails_home",
+            user => "$user",
+            group => "$group",
+            command => "git clone $myblog_url",
+            unless => "ls -f $blog_dir",
+           }
+
+     exec { "bundle_install_$blog_name":
+            path => ["$ruby_path","/usr/bin","/bin","/sbin","/usr/sbin","/usr/local/bin"],
+            #path => ["/home/rails4/.rubies/ruby-2.2.2/bin"]
+            cwd => "$blog_home",
+            user => "$user",
+            group => "$group",
+            command => "$ruby_path/gem install bundle && $ruby_path/bundle install && mkdir -p $blog_home/tmp/pids",
+            require => Exec["git_clone_myblog"],
+     }
+
+      exec { "rake_asset_compile":
+            path => ["$ruby_path","/usr/bin","/bin","/sbin","/usr/sbin","/usr/local/bin"],
+            user => "$user",
+            group => "$group",
+            cwd  => "$blog_home",
+            command => "$ruby_path/rake assets:precompile RAILS_ENV=\"production\"",
+            require => Exec["bundle_install_$blog_name"],
+      }
+
+     file {"$blog_config/database.yml":
+          ensure => present,
+          owner => "$user",
+          group => "$group",
+          mode => 0600,
+          source => "puppet:///modules/myblog/database.yml",
+          require => Exec["rake_asset_compile"], 
+     }
+
+     exec { "db_setup":
+          path => ["$ruby_path","/usr/bin","/bin","/sbin","/usr/sbin","/usr/local/bin"],
+          user => "$user",
+          cwd  => "$blog_home",
+          group => "$group",
+          command => "$ruby_path/rake db:setup RAILS_ENV=\"production\"",
+          require => File["$blog_config/database.yml"],
+     }
+  
+
+
+     file { "$blog_config/$unicorn":
+          ensure => present,
+          owner => "$user",
+          group => "$group",
+          mode => 0600,
+          source => "puppet:///modules/myblog/$unicorn",
+          require => Exec["db_setup"],
+     }
+
+     file { "$blog_config/$unicorn_start_sh":
+          ensure => present,
+          owner => "$user",
+          group => "$group",
+          mode => 0755,
+          source => "puppet:///modules/myblog/$unicorn_start_sh",
+          require => File["$blog_config/$unicorn"],
+     }
+
+     #unicorn start
+     exec { "start_unicorn":
+          path => ["$ruby_path","$blog_config","/usr/bin","/bin","/sbin","/usr/sbin","/usr/local/bin"],
+          cwd  => "$blog_config",
+          user => "$user",
+          group => "$group",
+          command => "./$unicorn_start_sh start",
+          require => File["$blog_config/$unicorn_start_sh"],
+     }
+           
+  
+     #Nginx default virtual host
+     file { "/etc/nginx/conf.d/default.conf":
+         ensure => present,
+         owner => "root",
+         group => "root",
+         mode => 0644,      
+         content => template("myblog/nginx_default.conf.erb"),
+         notify  => Service[nginx],
+         require => Exec["start_unicorn"],
+
+     }
+
+}

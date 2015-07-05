@@ -2,15 +2,16 @@ class java::oracle_jdk7{
      $user="rails4"
      $group="rails4"
      $rails_home="/home/rails4"
-     $java_install_path="$rails_home/java/bin"
      $jdk_version="jdk1.7.0_79"
      $jdk_file="jdk-$jdk_version-linux-x64.tar.gz"
      $java_dir="$rails_home/.java_$jdk_version"
+     $java_install_path="$java_dir/bin"
      $oracle_java7_url="http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-x64.tar.gz"
      $cookie="--no-cookies"
      $cert_verify="--no-check-certificate"
      $header="--header"
      $header_value="Cookie: oraclelicense=accept-securebackup-cookie"
+     #include java::config
      
      # do something ubuntu specific
      # execute 'apt-get update'
@@ -23,7 +24,7 @@ class java::oracle_jdk7{
      exec { 'wget-install':
        path => ['/bin','/usr/sbin','/usr/local/bin','/usr/local/sbin','/sbin','/usr/bin'],
        command => 'apt-get install wget',
-       unless => 'ls /usr/bin/wget',
+       unless => 'ls -f /usr/bin/wget',
        require => Exec['apt-update'],
      }
 
@@ -36,7 +37,7 @@ class java::oracle_jdk7{
        command => "wget $cookie $cert_verify $header \"$header_value\" \"$oracle_java7_url\" -O $jdk_file ",
        #when using local web
        #command => "wget $local_web/$jdk_file",
-       unless => "ls $rails_home/$jdk_file",
+       unless => "ls -f $java_install_path",
        timeout => 0,
        #require => Exec['wget-install'],
       }
@@ -47,7 +48,7 @@ class java::oracle_jdk7{
        group => $group,
        cwd => $rails_home,
        command => "tar xvzf $jdk_file && mv $jdk_version $java_dir && rm -rf $jdk_version $jdk_file",
-       unless => "ls $java_install_path",
+       unless => "ls -f $java_install_path",
        require => Exec['jdk7-get-untar'],
      }
 

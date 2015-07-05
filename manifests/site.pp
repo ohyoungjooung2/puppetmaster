@@ -9,6 +9,8 @@ node 'puppetclient1'{
      include rails4::ruby_compile
      include mysql::server
      include java::oracle_jdk7
+     include nginx
+     include myblog
 }
 
 node 'centos7-puppet-client'{
@@ -26,4 +28,8 @@ node 'puppetclient2'{
      include rails4::ruby22_pre
      #compile ruby $version
      include rails4::ruby_compile
+     include mysql::server
+     include java::oracle_jdk7
+     include nginx
+     include myblog
 }

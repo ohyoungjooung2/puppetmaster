@@ -85,7 +85,7 @@ class mysql::server{
 
        exec { "myblog_db_user":
                   path => $path,
-                  command => "mysql -u root -proot -e 'GRANT ALL PRIVILEGES ON myblog_production.* to myblog@127.0.0.1 IDENTIFIED BY \"myblogpass\" '",
+                  command => "mysql -u root -proot -e 'GRANT ALL PRIVILEGES ON myblog_production.* to myblog@localhost IDENTIFIED BY \"myblogpass\" '",
                   require => Exec["remove_no_password"]
             }
 

@@ -1,0 +1,8 @@
+production:
+  adapter: mysql2
+  encoding: utf8
+  database: myblog_production
+  pool: 5
+  username: myblog
+  password: myblogpass
+  socket: /var/run/mysqld/mysqld.sock

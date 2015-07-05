@@ -26,7 +26,7 @@ class rails4::ruby_compile {
         group => $rails_group,
         #mkdir $compile_dir
         command => "mkdir $compile_dir",
-        unless => "ls $compile_dir",
+        unless => "ls -f $compile_dir",
      }
 
      exec { "wget_ruby_source_$ruby_version":
@@ -46,7 +46,7 @@ class rails4::ruby_compile {
         cwd => $config_dir,
         user => $rails_user,
         group => $rails_group,
-        command => "$config_dir/configure --prefix=$ruby_each_home && make && make install",
+        command => "./configure --prefix=$ruby_each_home && make && make install",
         unless => "ls $ruby_path",
         require => Exec["wget_ruby_source_$ruby_version"],
         timeout => 0,
@@ -58,6 +58,7 @@ class rails4::ruby_compile {
         path => ['/bin','/usr/bin','/usr/sbin','/sbin'],
         cwd => $rails_home,
         command => "rm -rf $compile_dir",
+        onlyif => "ls $compile_dir",
         require => Exec["compile_$ruby_version"],
      }
 
