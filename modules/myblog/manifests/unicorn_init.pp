@@ -5,7 +5,7 @@ class myblog::unicorn_init inherits myblog::config {
           cwd  => "$blog_config",
           user => "$user",
           group => "$group",
-          command => "./$unicorn_start_sh start",
+          command => "rm -f /tmp/unicorn.blog.sock && ./$unicorn_start_sh restart",
           require => File["$blog_config/$unicorn_start_sh"],
      }
 }

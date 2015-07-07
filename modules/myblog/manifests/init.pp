@@ -1,4 +1,5 @@
 class myblog  {
+
      #myblog rails application deployment
      include myblog::required_pkg 
      include myblog::pre_exec

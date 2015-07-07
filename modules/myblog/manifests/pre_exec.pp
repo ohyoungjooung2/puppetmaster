@@ -3,8 +3,8 @@ class myblog::pre_exec inherits myblog::config {
             cwd => "$rails_home",
             user => "$user",
             group => "$group",
-            command => "git clone $myblog_url",
-            unless => "ls -f $blog_dir",
+            command => "mv $blog_dir $blog_dir_$(date +%y-%m-d-%H) && git clone $myblog_url",
+            #unless => "ls -f $blog_dir",
            }   
 
      exec { "bundle_install_$blog_name":
