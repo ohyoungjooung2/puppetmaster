@@ -1,0 +1,5 @@
+<%# /etc/puppet/modules/rails4/templates/.jruby.bashrc.erb %>
+JRUBY_PATH=<%= @jruby_path %>
+JAVA_PATH=<%= @java_path %>
+export PATH=$JRUBY_PATH:$JAVA_PATH:$PATH
+set -o vi
